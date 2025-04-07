@@ -1,14 +1,10 @@
 import { ApiResponse, errorHandler } from "../utils/response.utils.js";
 
 //get all students, use aggregate paginate, use size and page query params, use sort query param, use search query param
-export function getAll(model, req, res, query = {}) {
+export function getAll(model, req, res, query = {}, searchableFields = []) {
     const { size, page, sort, search } = req.query;
     if (search) {
-        query.$or = [
-            { name: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-            { phone: { $regex: search, $options: "i" } },
-        ];
+        query.$or = searchableFields.map((field) => ({ [field]: { $regex: search, $options: "i" } }));
     }
     model.aggregatePaginate(
         model.aggregate([

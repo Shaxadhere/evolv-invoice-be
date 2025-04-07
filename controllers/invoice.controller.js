@@ -3,7 +3,10 @@ import { create, deleteOne, getAll, getOne, updateOne } from "../generics/crud.g
 
 //get all invoices, use aggregate paginate, use size and page query params, use sort query param, use search query param
 export function getInvoices(req, res) {
-    return getAll(Invoice, req, res);
+    return getAll(Invoice, req, res, {}, [
+        'invoiceNumber',
+        'clientName'
+    ]);
 }
 
 //get a single invoice by id
