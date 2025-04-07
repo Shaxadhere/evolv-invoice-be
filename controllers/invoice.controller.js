@@ -5,7 +5,8 @@ import { create, deleteOne, getAll, getOne, updateOne } from "../generics/crud.g
 export function getInvoices(req, res) {
     return getAll(Invoice, req, res, {}, [
         'invoiceNumber',
-        'clientName'
+        'clientName',
+        'clientEmail'
     ]);
 }
 
