@@ -17,7 +17,6 @@ const bankDetailsSchema = new Schema({
 });
 
 const invoiceSchema = new Schema({
-    // invoiceNumber: Number,
     invoiceNumber: { type: Number },
     invoiceDate: { type: String, required: true },
     clientName: { type: String, required: true },

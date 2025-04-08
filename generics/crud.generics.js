@@ -1,25 +1,6 @@
 import { ApiResponse, errorHandler } from "../utils/response.utils.js";
 
 //get all students, use aggregate paginate, use size and page query params, use sort query param, use search query param
-// export function getAll(model, req, res, query = {}, searchableFields = []) {
-//     const { size, page, sort, search } = req.query;
-//     if (search) {
-//         query.$or = searchableFields.map((field) => ({ [field]: { $regex: search, $options: "i" } }));
-//     }
-//     model.aggregatePaginate(
-//         model.aggregate([
-//             { $match: query },
-//             { $sort: { [sort || "createdAt"]: -1 } },
-//         ]),
-//         { page, size }
-//     )
-//         .then((data) => {
-//             return res.status(200).json(ApiResponse({ data, message: "Data fetched successfully" }));
-//         })
-//         .catch((err) => {
-//             return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
-//         });
-// }
 
 export function getAll(model, req, res, query = {}, searchableFields = []) {
     let {
@@ -44,7 +25,6 @@ export function getAll(model, req, res, query = {}, searchableFields = []) {
         };
       });
     }
-  
     model
       .aggregatePaginate(
         model.aggregate([
