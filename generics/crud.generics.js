@@ -1,25 +1,107 @@
 import { ApiResponse, errorHandler } from "../utils/response.utils.js";
 
 //get all students, use aggregate paginate, use size and page query params, use sort query param, use search query param
+// export function getAll(model, req, res, query = {}, searchableFields = []) {
+//     const { size, page, sort, search } = req.query;
+//     if (search) {
+//         query.$or = searchableFields.map((field) => ({ [field]: { $regex: search, $options: "i" } }));
+//     }
+//     model.aggregatePaginate(
+//         model.aggregate([
+//             { $match: query },
+//             { $sort: { [sort || "createdAt"]: -1 } },
+//         ]),
+//         { page, size }
+//     )
+//         .then((data) => {
+//             return res.status(200).json(ApiResponse({ data, message: "Data fetched successfully" }));
+//         })
+//         .catch((err) => {
+//             return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
+//         });
+// }
+
 export function getAll(model, req, res, query = {}, searchableFields = []) {
-    const { size, page, sort, search } = req.query;
+    let {
+      size = 10,
+      page = 1,
+      sort = "createdAt",
+      order = "desc",
+      search,
+    } = req.query;
+  
+    size = Number(size);
+    page = Number(page);
+    const sortOrder = order === "asc" ? 1 : -1;
+  
     if (search) {
-        query.$or = searchableFields.map((field) => ({ [field]: { $regex: search, $options: "i" } }));
+      query.$or = searchableFields.map((field) => {
+        if (field === "invoiceNumber" && !isNaN(Number(search))) {
+          return { [field]: Number(search) };
+        }
+        return {
+          [field]: { $regex: search, $options: "i" },
+        };
+      });
     }
-    model.aggregatePaginate(
+  
+    model
+      .aggregatePaginate(
         model.aggregate([
-            { $match: query },
-            { $sort: { [sort || "createdAt"]: -1 } },
+          { $match: query },
+          { $sort: { [sort]: sortOrder } },
         ]),
-        { page, size }
-    )
-        .then((data) => {
-            return res.status(200).json(ApiResponse({ data, message: "Data fetched successfully" }));
-        })
-        .catch((err) => {
-            return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
-        });
-}
+        {
+          page,
+          limit: size,
+        }
+      )
+      .then((data) => {
+        return res
+          .status(200)
+          .json(ApiResponse({ data, message: "Data fetched successfully" }));
+      })
+      .catch((err) => {
+        return res
+          .status(400)
+          .json(ApiResponse({ message: errorHandler(err), status: false }));
+      });
+  }
+  
+
+
+// export function getAll(model, req, res, query = {}, searchableFields = []) {
+//   const { size, page, sort = "createdAt", order = "desc", search } = req.query;
+//   if (search) {
+//     query.$or = searchableFields.map((field) => {
+//       if (field === "invoiceNumber" && !isNaN(Number(search))) {
+//         return { [field]: Number(search) };
+//       }
+//       return {
+//         [field]: { $regex: search, $options: "i" },
+//       };
+//     });
+//   }
+//   const sortOrder = order === "asc" ? 1 : -1;
+//   model
+//     .aggregatePaginate(
+//       model.aggregate([
+//         { $match: query },
+//         { $sort: { [sort]: sortOrder } },
+//       ]),
+//       { page, limit: Number(size) || 10 }
+//     )
+//     .then((data) => {
+//       return res
+//         .status(200)
+//         .json(ApiResponse({ data, message: "Data fetched successfully" }));
+//     })
+//     .catch((err) => {
+//       return res
+//         .status(400)
+//         .json(ApiResponse({ message: errorHandler(err), status: false }));
+//     });
+// }
 
 //get a single entity by id
 export function getOne(model, req, res) {

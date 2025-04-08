@@ -1,5 +1,9 @@
 import { Schema, model } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+import mongoose from 'mongoose'; 
+import sequence from 'mongoose-sequence';
+
+const AutoIncrement = sequence(mongoose);
 
 const invoiceItemSchema = new Schema({
     description: { type: String, required: true },
@@ -13,7 +17,8 @@ const bankDetailsSchema = new Schema({
 });
 
 const invoiceSchema = new Schema({
-    invoiceNumber: { type: Number, required: true },
+    // invoiceNumber: Number,
+    invoiceNumber: { type: Number },
     invoiceDate: { type: String, required: true },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
@@ -30,6 +35,7 @@ const invoiceSchema = new Schema({
     contactEmail: { type: String, required: true },
 }, { timestamps: true });
 
+invoiceSchema.plugin(AutoIncrement, { inc_field: 'invoiceNumber' });
 invoiceSchema.plugin(mongooseAggregatePaginate);
 const Invoice = model('Invoice', invoiceSchema);
 export default Invoice
