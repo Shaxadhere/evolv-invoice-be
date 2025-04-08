@@ -19,8 +19,6 @@ connect(process.env.DB_CONNECTION)
     .then(() => console.log("Database connected"))
     .catch((error) => console.log(error));
 
-    
-
 //middlewares
 const coreOptions = {
     origin: "*",
