@@ -10,8 +10,13 @@ export function getAll(model, req, res, query = {}, searchableFields = []) {
     sort = defaultFilter?.sort,
     order = defaultFilter?.order,
     search,
+    ...rest
   } = req.query;
 
+  const restQuery = { ...rest };
+  const restQueryKeys = Object.keys(restQuery)
+
+  console.log(restQuery, "'")
   size = Number(size);
   page = Number(page);
   const sortOrder = order === "asc" ? 1 : -1;
@@ -24,6 +29,19 @@ export function getAll(model, req, res, query = {}, searchableFields = []) {
       return {
         [field]: { $regex: search, $options: "i" },
       };
+    });
+  }
+  if (restQueryKeys.length > 0) {
+    query.$and = restQueryKeys.map((key) => {
+      const values = restQuery[key].split(",");
+      const _values = values.map((value)=> {
+          if (key === "invoiceNumber") {
+            return { [key]: Number(value) };
+          }
+          return { [key]: { $regex: value, $options: "i" } };
+      })
+      return { [key]: { $in: values } };
+      // return { [key]: { $regex: restQuery[key] } };
     });
   }
   model
@@ -98,4 +116,38 @@ export function deleteOne(model, req, res) {
     .catch((err) => {
       return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
     });
+}
+
+
+export function getFacet(model, req, res) {
+  model
+    .aggregate(
+      [
+        {
+          $group: {
+            _id: "$clientName",
+            count: { $sum: 1 },
+            id: { $first: "$_id" } // or use $min/$max/$last depending on your need
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            clientName: "$_id",
+            count: 1,
+            id: 1
+          }
+        }
+      ])
+    .then((data) => {
+      return res
+        .status(200)
+        .json(ApiResponse({ data, message: "Data fetched successfully" }));
+    })
+    .catch((err) => {
+      return res
+        .status(400)
+        .json(ApiResponse({ message: errorHandler(err), status: false }));
+    });
+
 }
