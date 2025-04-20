@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import mongoose from 'mongoose'; 
+import mongoose from 'mongoose';
 import sequence from 'mongoose-sequence';
 
 const AutoIncrement = sequence(mongoose);
@@ -19,6 +19,11 @@ const bankDetailsSchema = new Schema({
 const invoiceSchema = new Schema({
     invoiceNumber: { type: Number },
     invoiceDate: { type: String, required: true },
+    invoiceStatus: {
+        type: String,
+        default: 'Pending',
+        enum: ['Paid', 'Pending'],
+    },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
     clientEmail: { type: String, required: true },

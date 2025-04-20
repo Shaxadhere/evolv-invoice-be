@@ -11,7 +11,7 @@ export function getAll(model, req, res, query = {}, searchableFields = []) {
     order = defaultFilter?.order,
     search,
   } = req.query;
-
+1
   size = Number(size);
   page = Number(page);
   const sortOrder = order === "asc" ? 1 : -1;
@@ -82,6 +82,32 @@ export function updateOne(model, req, res) {
     })
     .then((data) => {
       return res.status(200).json(ApiResponse({ data, message: "Entity updated successfully" }));
+    })
+    .catch((err) => {
+      return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
+    });
+}
+
+//update invoice status by id and return the updated invoice
+export function updateStatus(model, req, res) {
+  const { invoiceStatus } = req.body;
+  console.log(invoiceStatus, "invoiceStatus")
+  if (!invoiceStatus) {
+    return res.status(400).json(ApiResponse({ message: "Status is required", status: false }));
+  }
+  model.findByIdAndUpdate(
+    req.params.id,
+    { invoiceStatus },
+    {
+      new: true,
+      useFindAndModify: false,
+    }
+  )
+    .then((data) => {
+      if (!data) {
+        return res.status(404).json(ApiResponse({ message: "Invoice not found", status: false }));
+      }
+      return res.status(200).json(ApiResponse({ data, message: "Status updated successfully" }));
     })
     .catch((err) => {
       return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
