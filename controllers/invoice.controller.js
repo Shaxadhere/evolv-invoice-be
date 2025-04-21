@@ -1,5 +1,5 @@
 import Invoice from "../models/invoice.model.js";
-import { create, deleteOne, getAll, getOne, updateOne, updateStatus } from "../generics/crud.generics.js"
+import { create, deleteOne, getAll,getFacet, getOne, updateOne,updateStatus } from "../generics/crud.generics.js"
 
 //get all invoices, use aggregate paginate, use size and page query params, use sort query param, use search query param
 export function getInvoices(req, res) {
@@ -39,4 +39,8 @@ export function updateInvoiceStatus(req, res) {
 //delete a invoice by id
 export function deleteInvoice(req, res) {
     return deleteOne(Invoice, req, res);
+}
+
+export function getInvoiceFacet(req, res) {
+    return getFacet(Invoice, req, res);
 }
