@@ -1,5 +1,5 @@
 import Invoice from "../models/invoice.model.js";
-import { create, deleteOne, getAll,getFacet, getOne, updateOne,updateStatus } from "../generics/crud.generics.js"
+import { create, deleteOne, getAll, getFacet, getOne, updateOne, updateStatus } from "../generics/crud.generics.js"
 
 //get all invoices, use aggregate paginate, use size and page query params, use sort query param, use search query param
 export function getInvoices(req, res) {
@@ -30,9 +30,6 @@ export function updateInvoice(req, res) {
 
 //for only update invoice status
 export function updateInvoiceStatus(req, res) {
-    // const body = req.body
-    // const invoiceStatus = body.invoiceStatus
-    // req.body = { invoiceStatus: invoiceStatus }
     return updateStatus(Invoice, req, res);
 }
 
