@@ -13,6 +13,10 @@ export function getAll(model, req, res, query = {}, searchableFields = []) {
     ...rest
   } = req.query;
 
+  const restQuery = { ...rest };
+  const restQueryKeys = Object.keys(restQuery)
+
+  console.log(restQuery, "'")
   size = Number(size);
   page = Number(page);
   const sortOrder = order === "asc" ? 1 : -1;
@@ -171,5 +175,4 @@ export function getFacet(model, req, res) {
         .status(400)
         .json(ApiResponse({ message: errorHandler(err), status: false }));
     });
-
 }
