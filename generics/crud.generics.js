@@ -106,6 +106,32 @@ export function updateOne(model, req, res) {
     });
 }
 
+//update invoice status by id and return the updated invoice
+export function updateStatus(model, req, res) {
+  const { invoiceStatus } = req.body;
+  console.log(invoiceStatus, "invoiceStatus")
+  if (!invoiceStatus) {
+    return res.status(400).json(ApiResponse({ message: "Status is required", status: false }));
+  }
+  model.findByIdAndUpdate(
+    req.params.id,
+    { invoiceStatus },
+    {
+      new: true,
+      useFindAndModify: false,
+    }
+  )
+    .then((data) => {
+      if (!data) {
+        return res.status(404).json(ApiResponse({ message: "Invoice not found", status: false }));
+      }
+      return res.status(200).json(ApiResponse({ data, message: "Status updated successfully" }));
+    })
+    .catch((err) => {
+      return res.status(400).json(ApiResponse({ message: errorHandler(err), status: false }));
+    });
+}
+
 //delete a entity by id
 export function deleteOne(model, req, res) {
   model.findByIdAndDelete(req.params.id)
@@ -149,5 +175,4 @@ export function getFacet(model, req, res) {
         .status(400)
         .json(ApiResponse({ message: errorHandler(err), status: false }));
     });
-
 }
