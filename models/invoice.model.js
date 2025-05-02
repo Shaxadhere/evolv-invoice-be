@@ -22,7 +22,7 @@ const invoiceSchema = new Schema({
     invoiceStatus: {
         type: String,
         default: 'Pending',
-        enum: ['Paid', 'Pending'],
+        enum: ['Pending','Paid','Rejected'],
     },
     clientName: { type: String, required: true },
     clientPhone: { type: String, required: true },
